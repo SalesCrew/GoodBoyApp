@@ -1,0 +1,27 @@
+DIENSTVERTRAG-VORLAGE ANLEITUNG
+================================
+
+Bitte legen Sie Ihre Word-Vorlage (.docx) als "template.docx" in diesem Ordner ab.
+
+WICHTIG: Ersetzen Sie in Ihrem Dienstvertrag die folgenden drei Stellen:
+
+Im Kopfbereich des Vertrages:
+
+    Frau/Herr:                  {vollstaendigerName}
+    geboren am:                 {geburtsdatum}
+    wohnhaft in:                {strasse}, {plz} {stadt}
+
+
+ANLEITUNG:
+----------
+1. Öffnen Sie Ihren Dienstvertrag in Word
+2. Suchen Sie die Stelle "Vorname Nachname" und ersetzen Sie sie durch: {vollstaendigerName}
+3. Suchen Sie "xx.xx.xxxx" und ersetzen Sie sie durch: {geburtsdatum}
+4. Suchen Sie "Straße Hausnummer, PLZ Ort" und ersetzen Sie sie durch: {strasse}, {plz} {stadt}
+5. Speichern Sie die Datei als "template.docx" in diesem Ordner (public)
+
+Die geschweiften Klammern {} sind wichtig - sie markieren die Platzhalter!
+
+Nach dem Hinzufügen der template.docx können Sie über die App alle Verträge
+als ZIP-Datei exportieren. Jeder Vertrag wird automatisch mit den Daten
+der jeweiligen Mitarbeiter ausgefüllt.
