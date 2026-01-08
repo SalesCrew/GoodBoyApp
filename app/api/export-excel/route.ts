@@ -48,9 +48,10 @@ export async function POST(request: NextRequest) {
 
     // Generate buffer
     const buffer = XLSX.write(workbook, { type: 'array', bookType: 'xlsx' });
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
 
     // Return as file download
-    return new NextResponse(new Uint8Array(buffer), {
+    return new Response(blob, {
       status: 200,
       headers: {
         'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',

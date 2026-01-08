@@ -101,13 +101,13 @@ export async function POST(request: NextRequest) {
 
     // Generate the final ZIP
     const zipBuffer = await zip.generateAsync({
-      type: 'uint8array',
+      type: 'blob',
       compression: 'DEFLATE',
       compressionOptions: { level: 9 },
     });
 
     // Return as file download
-    return new NextResponse(zipBuffer, {
+    return new Response(zipBuffer, {
       status: 200,
       headers: {
         'Content-Type': 'application/zip',
