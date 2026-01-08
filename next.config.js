@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  serverExternalPackages: ['docxtemplater', 'pizzip']
+  experimental: {
+    serverComponentsExternalPackages: ['docxtemplater', 'pizzip']
+  }
 };
 
 module.exports = nextConfig;

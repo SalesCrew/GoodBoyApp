@@ -47,10 +47,10 @@ export async function POST(request: NextRequest) {
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Mitarbeiter');
 
     // Generate buffer
-    const buffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
+    const buffer = XLSX.write(workbook, { type: 'array', bookType: 'xlsx' });
 
     // Return as file download
-    return new NextResponse(buffer, {
+    return new NextResponse(new Uint8Array(buffer), {
       status: 200,
       headers: {
         'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
