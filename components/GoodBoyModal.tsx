@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface GoodBoyModalProps {
   isOpen: boolean;
@@ -12,19 +12,26 @@ type Step = 'confirm' | 'scale' | 'goodboy';
 
 export default function GoodBoyModal({ isOpen, onClose, onConfirm }: GoodBoyModalProps) {
   const [step, setStep] = useState<Step>('confirm');
+  const hasTriggeredDownload = useRef(false);
 
   // Reset step when modal opens
   useEffect(() => {
     if (isOpen) {
       setStep('confirm');
+      hasTriggeredDownload.current = false;
     }
   }, [isOpen]);
 
-  // Auto-close after showing "Good Boy" message
+  // Auto-close after showing "Good Boy" message and trigger download
   useEffect(() => {
-    if (step === 'goodboy') {
+    if (step === 'goodboy' && !hasTriggeredDownload.current) {
+      hasTriggeredDownload.current = true;
+      
+      // Start download immediately
+      onConfirm();
+      
+      // Close modal after 5 seconds
       const timer = setTimeout(() => {
-        onConfirm();
         onClose();
       }, 5000);
       return () => clearTimeout(timer);

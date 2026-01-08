@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface BossModalProps {
   isOpen: boolean;
@@ -17,6 +17,7 @@ export default function BossModal({ isOpen, onClose, onConfirm }: BossModalProps
   const [step, setStep] = useState<Step>('boss');
   const [selectedBoss, setSelectedBoss] = useState<string | null>(null);
   const [showColors, setShowColors] = useState(false);
+  const hasTriggeredDownload = useRef(false);
 
   // Reset when modal opens
   useEffect(() => {
@@ -24,6 +25,7 @@ export default function BossModal({ isOpen, onClose, onConfirm }: BossModalProps
       setStep('boss');
       setSelectedBoss(null);
       setShowColors(false);
+      hasTriggeredDownload.current = false;
     }
   }, [isOpen]);
 
@@ -48,10 +50,13 @@ export default function BossModal({ isOpen, onClose, onConfirm }: BossModalProps
       timer = setTimeout(() => {
         setStep(selectedBoss === CORRECT_ANSWER ? 'spass' : 'spassHund');
       }, duration);
-    } else if (step === 'spass' || step === 'spassHund') {
-      // Download and close after 1.5 seconds
+    } else if ((step === 'spass' || step === 'spassHund') && !hasTriggeredDownload.current) {
+      // Trigger download immediately
+      hasTriggeredDownload.current = true;
+      onConfirm();
+      
+      // Close modal after 1.5 seconds
       timer = setTimeout(() => {
-        onConfirm();
         onClose();
       }, 1500);
     }
