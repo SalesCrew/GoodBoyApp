@@ -4,14 +4,20 @@ import { getAllMitarbeiter, addMitarbeiterDB, isDatabaseAvailable } from '@/lib/
 // GET all Mitarbeiter
 export async function GET() {
   try {
-    // If database is not configured, return empty array
+    // If database is not configured, return special response
     // (frontend will use localStorage)
     if (!isDatabaseAvailable()) {
-      return NextResponse.json([]);
+      return NextResponse.json({ 
+        data: [], 
+        dbAvailable: false 
+      });
     }
     
     const mitarbeiter = await getAllMitarbeiter();
-    return NextResponse.json(mitarbeiter);
+    return NextResponse.json({ 
+      data: mitarbeiter, 
+      dbAvailable: true 
+    });
   } catch (error) {
     console.error('Failed to get Mitarbeiter:', error);
     return NextResponse.json({ error: 'Failed to load data' }, { status: 500 });

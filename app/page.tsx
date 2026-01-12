@@ -18,9 +18,11 @@ export default function Home() {
       try {
         const response = await fetch('/api/mitarbeiter');
         if (response.ok) {
-          const data = await response.json();
-          if (data.length > 0 || response.status === 200) {
-            setMitarbeiter(data);
+          const result = await response.json();
+          
+          // Check if database is actually available
+          if (result.dbAvailable === true) {
+            setMitarbeiter(result.data || []);
             setUseDatabase(true);
             setIsLoaded(true);
             return;
@@ -40,13 +42,25 @@ export default function Home() {
   }, []);
 
   const handleAddMitarbeiter = async (formData: MitarbeiterFormData) => {
+    // #region agent log
+    fetch('http://127.0.0.1:7243/ingest/8e3d9533-8b08-4cc1-bed5-8650680b5417',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'page.tsx:31',message:'handleAddMitarbeiter called',data:{formData,useDatabase},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H2'})}).catch(()=>{});
+    // #endregion
+    
     if (useDatabase) {
       try {
+        // #region agent log
+        fetch('http://127.0.0.1:7243/ingest/8e3d9533-8b08-4cc1-bed5-8650680b5417',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'page.tsx:36',message:'Attempting database API call',data:{formData},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H2'})}).catch(()=>{});
+        // #endregion
+        
         const response = await fetch('/api/mitarbeiter', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(formData),
         });
+        
+        // #region agent log
+        fetch('http://127.0.0.1:7243/ingest/8e3d9533-8b08-4cc1-bed5-8650680b5417',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'page.tsx:46',message:'API response received',data:{status:response.status,ok:response.ok},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H2'})}).catch(()=>{});
+        // #endregion
         
         if (response.ok) {
           const newMitarbeiter = await response.json();
@@ -54,12 +68,24 @@ export default function Home() {
           return;
         }
       } catch (error) {
+        // #region agent log
+        fetch('http://127.0.0.1:7243/ingest/8e3d9533-8b08-4cc1-bed5-8650680b5417',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'page.tsx:55',message:'API call failed, falling back',data:{error:String(error)},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H2'})}).catch(()=>{});
+        // #endregion
         console.error('Failed to add to database, using localStorage');
       }
     }
     
+    // #region agent log
+    fetch('http://127.0.0.1:7243/ingest/8e3d9533-8b08-4cc1-bed5-8650680b5417',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'page.tsx:62',message:'Using localStorage fallback',data:{formData},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H3'})}).catch(()=>{});
+    // #endregion
+    
     // Fallback to localStorage
     const newMitarbeiter = addMitarbeiter(formData);
+    
+    // #region agent log
+    fetch('http://127.0.0.1:7243/ingest/8e3d9533-8b08-4cc1-bed5-8650680b5417',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'page.tsx:69',message:'localStorage addMitarbeiter returned',data:{newMitarbeiter},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H3'})}).catch(()=>{});
+    // #endregion
+    
     setMitarbeiter((prev) => [newMitarbeiter, ...prev]);
   };
 
