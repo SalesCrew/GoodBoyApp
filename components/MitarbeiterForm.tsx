@@ -52,7 +52,7 @@ export default function MitarbeiterForm({ onSubmit }: MitarbeiterFormProps) {
     formData.geburtsdatum;
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-soft p-6">
+    <form onSubmit={handleSubmit} autoComplete="off" className="bg-white rounded-xl shadow-soft p-6">
       <div className="space-y-5">
         {/* Row 1: Name and Birthday */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">

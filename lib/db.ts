@@ -3,10 +3,16 @@ import { createClient } from '@libsql/client';
 // Create database client
 // For local development, uses a local file
 // For production, uses Turso cloud database
-const db = createClient({
+const dbConfig: any = {
   url: process.env.TURSO_DATABASE_URL || 'file:local.db',
-  authToken: process.env.TURSO_AUTH_TOKEN,
-});
+};
+
+// Only add authToken if it exists (for cloud deployment)
+if (process.env.TURSO_AUTH_TOKEN) {
+  dbConfig.authToken = process.env.TURSO_AUTH_TOKEN;
+}
+
+const db = createClient(dbConfig);
 
 // Initialize database schema
 export async function initDatabase() {
