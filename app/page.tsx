@@ -5,58 +5,83 @@ import Header from '@/components/Header';
 import MitarbeiterForm from '@/components/MitarbeiterForm';
 import MitarbeiterList from '@/components/MitarbeiterList';
 import { Mitarbeiter, MitarbeiterFormData } from '@/lib/types';
+import { getMitarbeiter, addMitarbeiter, deleteMitarbeiter } from '@/lib/storage';
 
 export default function Home() {
   const [mitarbeiter, setMitarbeiter] = useState<Mitarbeiter[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [useDatabase, setUseDatabase] = useState(false);
 
-  // Load from database on mount
+  // Load data on mount - try database first, fallback to localStorage
   useEffect(() => {
     async function loadData() {
       try {
         const response = await fetch('/api/mitarbeiter');
         if (response.ok) {
           const data = await response.json();
-          setMitarbeiter(data);
+          if (data.length > 0 || response.status === 200) {
+            setMitarbeiter(data);
+            setUseDatabase(true);
+            setIsLoaded(true);
+            return;
+          }
         }
       } catch (error) {
-        console.error('Failed to load Mitarbeiter:', error);
-      } finally {
-        setIsLoaded(true);
+        console.log('Database not available, using localStorage');
       }
+      
+      // Fallback to localStorage
+      const data = getMitarbeiter();
+      setMitarbeiter(data);
+      setUseDatabase(false);
+      setIsLoaded(true);
     }
     loadData();
   }, []);
 
   const handleAddMitarbeiter = async (formData: MitarbeiterFormData) => {
-    try {
-      const response = await fetch('/api/mitarbeiter', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-      
-      if (response.ok) {
-        const newMitarbeiter = await response.json();
-        setMitarbeiter((prev) => [newMitarbeiter, ...prev]);
+    if (useDatabase) {
+      try {
+        const response = await fetch('/api/mitarbeiter', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData),
+        });
+        
+        if (response.ok) {
+          const newMitarbeiter = await response.json();
+          setMitarbeiter((prev) => [newMitarbeiter, ...prev]);
+          return;
+        }
+      } catch (error) {
+        console.error('Failed to add to database, using localStorage');
       }
-    } catch (error) {
-      console.error('Failed to add Mitarbeiter:', error);
     }
+    
+    // Fallback to localStorage
+    const newMitarbeiter = addMitarbeiter(formData);
+    setMitarbeiter((prev) => [newMitarbeiter, ...prev]);
   };
 
   const handleDeleteMitarbeiter = async (id: string) => {
-    try {
-      const response = await fetch(`/api/mitarbeiter/${id}`, {
-        method: 'DELETE',
-      });
-      
-      if (response.ok) {
-        setMitarbeiter((prev) => prev.filter((m) => m.id !== id));
+    if (useDatabase) {
+      try {
+        const response = await fetch(`/api/mitarbeiter/${id}`, {
+          method: 'DELETE',
+        });
+        
+        if (response.ok) {
+          setMitarbeiter((prev) => prev.filter((m) => m.id !== id));
+          return;
+        }
+      } catch (error) {
+        console.error('Failed to delete from database, using localStorage');
       }
-    } catch (error) {
-      console.error('Failed to delete Mitarbeiter:', error);
     }
+    
+    // Fallback to localStorage
+    deleteMitarbeiter(id);
+    setMitarbeiter((prev) => prev.filter((m) => m.id !== id));
   };
 
   // Show loading state
@@ -88,7 +113,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="py-6 text-center">
         <p className="text-xs text-gray-400">
-          Daten werden in der Datenbank gespeichert
+          {useDatabase ? 'Daten werden in der Datenbank gespeichert' : 'Daten werden lokal im Browser gespeichert'}
         </p>
       </footer>
     </div>

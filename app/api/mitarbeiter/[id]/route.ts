@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { deleteMitarbeiterDB } from '@/lib/db';
+import { deleteMitarbeiterDB, isDatabaseAvailable } from '@/lib/db';
 
 // DELETE a Mitarbeiter
 export async function DELETE(
@@ -7,6 +7,12 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
+    // If database is not configured, return error
+    // (frontend will use localStorage)
+    if (!isDatabaseAvailable()) {
+      return NextResponse.json({ error: 'Database not configured' }, { status: 501 });
+    }
+    
     await deleteMitarbeiterDB(params.id);
     return NextResponse.json({ success: true });
   } catch (error) {
