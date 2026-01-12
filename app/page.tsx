@@ -86,6 +86,19 @@ export default function Home() {
     setMitarbeiter((prev) => prev.filter((m) => m.id !== id));
   };
 
+  const handleImport = (importedData: any[]) => {
+    // Add all imported Mitarbeiter
+    const newMitarbeiter = importedData.map((data) => {
+      const mitarbeiterData = addMitarbeiter(data);
+      return mitarbeiterData;
+    });
+    
+    // Update state with new Mitarbeiter
+    setMitarbeiter((prev) => [...newMitarbeiter, ...prev]);
+    
+    alert(`${newMitarbeiter.length} Mitarbeiter erfolgreich importiert!`);
+  };
+
   // Show loading state
   if (!isLoaded) {
     return (
@@ -97,7 +110,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header mitarbeiter={mitarbeiter} />
+      <Header mitarbeiter={mitarbeiter} onImport={handleImport} />
       
       <main className="max-w-2xl mx-auto px-4 py-8">
         <div className="space-y-6">

@@ -2,12 +2,14 @@
 
 import { Mitarbeiter } from '@/lib/types';
 import ExportMenu from './ExportMenu';
+import ImportButton from './ImportButton';
 
 interface HeaderProps {
   mitarbeiter: Mitarbeiter[];
+  onImport: (data: any[]) => void;
 }
 
-export default function Header({ mitarbeiter }: HeaderProps) {
+export default function Header({ mitarbeiter, onImport }: HeaderProps) {
   return (
     <header className="h-14 bg-white border-b border-gray-100 sticky top-0 z-40">
       <div className="max-w-2xl mx-auto h-full px-4 flex items-center justify-between">
@@ -23,8 +25,11 @@ export default function Header({ mitarbeiter }: HeaderProps) {
           </h1>
         </div>
 
-        {/* Export Menu */}
-        <ExportMenu mitarbeiter={mitarbeiter} />
+        {/* Actions */}
+        <div className="flex items-center gap-2">
+          <ImportButton onImport={onImport} />
+          <ExportMenu mitarbeiter={mitarbeiter} />
+        </div>
       </div>
     </header>
   );
