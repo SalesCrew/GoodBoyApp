@@ -1,9 +1,7 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Mitarbeiter } from '@/lib/types';
-import GoodBoyModal from './GoodBoyModal';
-import BossModal from './BossModal';
 
 interface ExportMenuProps {
   mitarbeiter: Mitarbeiter[];
@@ -12,8 +10,6 @@ interface ExportMenuProps {
 export default function ExportMenu({ mitarbeiter }: ExportMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isExporting, setIsExporting] = useState<'excel' | 'contracts' | null>(null);
-  const [showGoodBoyModal, setShowGoodBoyModal] = useState(false);
-  const [showBossModal, setShowBossModal] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   const isDisabled = mitarbeiter.length === 0;
@@ -30,14 +26,11 @@ export default function ExportMenu({ mitarbeiter }: ExportMenuProps) {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleExportExcelClick = () => {
+  const handleExportExcel = async () => {
     if (isDisabled) return;
-    setIsOpen(false);
-    setShowBossModal(true);
-  };
-
-  const handleExportExcelConfirmed = useCallback(async () => {
+    
     setIsExporting('excel');
+    setIsOpen(false);
     
     try {
       const response = await fetch('/api/export-excel', {
@@ -63,16 +56,13 @@ export default function ExportMenu({ mitarbeiter }: ExportMenuProps) {
     } finally {
       setIsExporting(null);
     }
-  }, [mitarbeiter]);
-
-  const handleExportContractsClick = () => {
-    if (isDisabled) return;
-    setIsOpen(false);
-    setShowGoodBoyModal(true);
   };
 
-  const handleExportContractsConfirmed = useCallback(async () => {
+  const handleExportContracts = async () => {
+    if (isDisabled) return;
+    
     setIsExporting('contracts');
+    setIsOpen(false);
     
     try {
       const response = await fetch('/api/export-contracts', {
@@ -98,7 +88,7 @@ export default function ExportMenu({ mitarbeiter }: ExportMenuProps) {
     } finally {
       setIsExporting(null);
     }
-  }, [mitarbeiter]);
+  };
 
   return (
     <div ref={menuRef} className="relative">
@@ -128,7 +118,7 @@ export default function ExportMenu({ mitarbeiter }: ExportMenuProps) {
         <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-50 animate-slide-down">
           {/* Excel Export */}
           <button
-            onClick={handleExportExcelClick}
+            onClick={handleExportExcel}
             disabled={isExporting !== null}
             className="w-full px-4 py-2.5 text-left text-sm flex items-center gap-3 hover:bg-gray-50 transition-colors disabled:opacity-50"
           >
@@ -152,7 +142,7 @@ export default function ExportMenu({ mitarbeiter }: ExportMenuProps) {
 
           {/* Contracts Export */}
           <button
-            onClick={handleExportContractsClick}
+            onClick={handleExportContracts}
             disabled={isExporting !== null}
             className="w-full px-4 py-2.5 text-left text-sm flex items-center gap-3 hover:bg-gray-50 transition-colors disabled:opacity-50"
           >
@@ -175,20 +165,6 @@ export default function ExportMenu({ mitarbeiter }: ExportMenuProps) {
           </button>
         </div>
       )}
-
-      {/* Good Boy Modal (for ZIP) */}
-      <GoodBoyModal
-        isOpen={showGoodBoyModal}
-        onClose={() => setShowGoodBoyModal(false)}
-        onConfirm={handleExportContractsConfirmed}
-      />
-
-      {/* Boss Modal (for Excel) */}
-      <BossModal
-        isOpen={showBossModal}
-        onClose={() => setShowBossModal(false)}
-        onConfirm={handleExportExcelConfirmed}
-      />
     </div>
   );
 }

@@ -28,16 +28,9 @@ export default function MitarbeiterForm({ onSubmit }: MitarbeiterFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // #region agent log
-    fetch('http://127.0.0.1:7243/ingest/8e3d9533-8b08-4cc1-bed5-8650680b5417',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'MitarbeiterForm.tsx:28',message:'Form submit started',data:{formData},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H1'})}).catch(()=>{});
-    // #endregion
-    
     // Basic validation
     if (!formData.vollstaendigerName.trim() || !formData.strasse.trim() || 
         !formData.plz.trim() || !formData.stadt.trim() || !formData.geburtsdatum) {
-      // #region agent log
-      fetch('http://127.0.0.1:7243/ingest/8e3d9533-8b08-4cc1-bed5-8650680b5417',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'MitarbeiterForm.tsx:35',message:'Validation failed',data:{formData},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H1'})}).catch(()=>{});
-      // #endregion
       return;
     }
 
@@ -45,10 +38,6 @@ export default function MitarbeiterForm({ onSubmit }: MitarbeiterFormProps) {
     
     // Small delay for visual feedback
     await new Promise((resolve) => setTimeout(resolve, 100));
-    
-    // #region agent log
-    fetch('http://127.0.0.1:7243/ingest/8e3d9533-8b08-4cc1-bed5-8650680b5417',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'MitarbeiterForm.tsx:44',message:'Calling onSubmit',data:{formData},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H1'})}).catch(()=>{});
-    // #endregion
     
     onSubmit(formData);
     setFormData(initialFormState);
